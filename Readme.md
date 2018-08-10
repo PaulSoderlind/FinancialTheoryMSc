@@ -1,5 +1,5 @@
 # Introduction
-The .ipynb files are Julia notebooks. They use some data, which you find in the Data folder. The notebooks are meant to be used together with my lecture notes (pdf files). Actually, many of the examples in the lecture notes come from the calculations in these notebooks. 
+The .ipynb files are Julia notebooks. They use some data, which you find in the Data folder. The notebooks are meant to be used together with my lecture notes (pdf files). Actually, many of the examples in the lecture notes come from the calculations in these notebooks. The notebooks are tested on Julia 0.6, but should be mostly compatible with 0.7/1.0.
 
 
 # Instructions
