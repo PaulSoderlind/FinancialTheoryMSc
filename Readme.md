@@ -1,3 +1,8 @@
+
+# Notice 
+If GitHub fails to render the notebook, then use [nbviewer](https://nbviewer.jupyter.org/). First, try to open the notebook in GitHub, copy the link, paste it in the address field of nbviewer.
+
+
 # Introduction
 The .ipynb files are Julia notebooks. They use some data, which you find in the Data folder. The notebooks are meant to be used together with my lecture notes (pdf files). Actually, many of the examples in the lecture notes come from the calculations in these notebooks. The notebooks are tested on Julia 1.0, but should work on 0.7 too.
 
