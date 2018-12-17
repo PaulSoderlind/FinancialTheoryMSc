@@ -1,14 +1,14 @@
 """
-    printTable([fh::IO],x,colNames=[],rowNames=[],width=10,prec=3,NoPrinting=false,htmlQ=false)
+    printTable([fh::IO],x,colNames=[],rowNames=[];width=10,prec=3,NoPrinting=false,htmlQ=false)
 
 Print formatted row names (1st column) column names (1st row), and data matrix (the rest).
 
 See printmat() for (width,prec)
 
-To do: (a) put inputs into Dict (see TablePs)?; (b) allow for different n-vectors width&prec
+To do: (a) allow for different n-vectors width&prec
 
 """
-function printTable(fh::IO,x,colNames=[],rowNames=[],width=10,prec=3,NoPrinting=false,htmlQ=false)
+function printTable(fh::IO,x,colNames=[],rowNames=[];width=10,prec=3,NoPrinting=false,htmlQ=false)
 
   (m,n) = (size(x,1),size(x,2))
 
@@ -34,7 +34,7 @@ function printTable(fh::IO,x,colNames=[],rowNames=[],width=10,prec=3,NoPrinting=
     end
   end
 
-  xStr  = printmat(fh,x,width,prec,true,htmlQ)   #body of table, one long string
+  xStr  = printmat(fh,x,width=width,prec=prec,NoPrinting=true,htmlQ=htmlQ)   #body of table, one long string
   xStrV = split(xStr,"\n")                       #vector of strings (one per row of x)
 
   iob = IOBuffer()
@@ -57,8 +57,9 @@ function printTable(fh::IO,x,colNames=[],rowNames=[],width=10,prec=3,NoPrinting=
 
 end
                         #when fh is not supplied: printing to screen
-printTable(x,colNames=[],rowNames=[],width=10,prec=3,NoPrinting=false,htmlQ=false) =
-printTable(stdout::IO,x,colNames,rowNames,width,prec,NoPrinting,htmlQ)
+printTable(x,colNames=[],rowNames=[];width=10,prec=3,NoPrinting=false,htmlQ=false) =
+printTable(stdout::IO,x,colNames,rowNames,
+                      width=width,prec=prec,NoPrinting=NoPrinting,htmlQ=htmlQ)
 #------------------------------------------------------------------------------
 
 
