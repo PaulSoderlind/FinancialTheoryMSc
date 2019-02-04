@@ -65,7 +65,6 @@ end
 Calculate Pr(z<=x) for N(0,1) variable z
 """
 function Φ(x)
-
     Pr = cdf(Normal(0,1),x)
     return Pr
 end
@@ -77,7 +76,6 @@ end
 Calculate Black-Scholes European option price, continuous dividends of δ
 """
 function OptionBlackSPs(S,K,m,y,σ,δ=0,PutIt=false)
-
     d1 = ( log(S/K) + (y-δ+0.5*σ^2)*m ) / (σ*sqrt(m))
     d2 = d1 - σ*sqrt(m)
     c  = exp(-δ*m)*S*Φ(d1) - K*exp(-y*m)*Φ(d2)
