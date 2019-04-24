@@ -10,6 +10,8 @@ To do: (a) allow for different n-vectors width&prec
 """
 function printTable(fh::IO,x,colNames=[],rowNames=[];width=10,prec=3,NoPrinting=false,htmlQ=false)
 
+  isempty(x) && return nothing                        #do nothing is isempty(x)
+
   (m,n) = (size(x,1),size(x,2))
 
   if isempty(rowNames)                                 #create row names "r1"
@@ -65,41 +67,14 @@ printTable(stdout::IO,x,colNames,rowNames,
 
 #------------------------------------------------------------------------------
 """
-    println4Ps([fh::IO],width,prec,z...)
+    printTable2
 
-Subsitute for println by formatting of width and precision
-
-
-# Input
-- `fh::IO`:    (optional) file handle. If not supplied, prints to screen
-- `z::String`:   string, numbers and arrays to print
-
-
-
-Paul.Soderlind@unisg.ch, May 2017
-
+Call on printTable2 twice: to print to screen and then to an open file (IOStream)
 """
-function println4Ps(fh::IO,width,prec,z...)
-
-  for x in z                              #loop over inputs in z...
-    if isa(x,Union{String,Date,DateTime,Missing})
-      print(fh,lpad(x,width))
-    else                                         #other types
-      iob = IOBuffer()
-      for i = 1:length(x)
-        if isa(x[i],AbstractFloat)               #Float
-          write(iob,fmtNumPs(x[i],width,prec,"right"))
-        else                                     #Integer, etc
-          write(iob,lpad(x[i],width))
-        end
-      end
-      print(fh,String(take!(iob)))
-    end
+function printTable2(fh,x,colNames=[],rowNames=[];width=10,prec=3,NoPrinting=false,htmlQ=false)
+  printTable(x,colNames,rowNames,width=width,prec=prec,NoPrinting=NoPrinting,htmlQ=htmlQ)      #to screen
+  if isa(fh,IOStream) && isopen(fh)
+    printTable(fh,x,colNames,rowNames,width=width,prec=prec,NoPrinting=NoPrinting,htmlQ=htmlQ) #to file
   end
-
-  print(fh,"\n")
-
 end
-                        #when fh is not supplied: printing to screen
-println4Ps(width,prec,z...) = println4Ps(stdout::IO,width,prec,z...)
 #------------------------------------------------------------------------------
