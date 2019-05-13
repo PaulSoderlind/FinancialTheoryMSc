@@ -23,7 +23,6 @@ end
 Calculate the std and portfolio weights of a portfolio (with a given mean, mustar) on MVF of (risky assets,riskfree)
 """
 function MVCalcRf(mustar,μ,Σ,Rf)
-    n     = length(μ)
     μe    = μ .- Rf
     Σ_1   = inv(Σ)
     w     = (mustar-Rf)/(μe'Σ_1*μe) * Σ_1*μe
