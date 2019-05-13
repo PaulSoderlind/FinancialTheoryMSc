@@ -39,14 +39,16 @@ end
 
 Calculate price of American option from binomial model
 """
-function AmOptionPrice(STree,K,y,h,p,isPut=false)
+function AmOptionPrice(STree,K,y,h,p,isPut=false)     #price of American option
     Value = deepcopy(STree)                           #tree for derivative, to fill
     n     = length(STree) - 1
+    Exerc = [falses(i) for i = 1:length(STree)]
     if isPut
         Value[n+1] = max.(0,K.-STree[n+1])            #put, at last time node
     else
         Value[n+1] = max.(0,STree[n+1].-K)            #call, at last time node
     end
+    Exerc[n+1] = Value[n+1] .> 0                      #exercise
     for i = n:-1:1                                    #move backward in time
         fa  = exp(-y*h)*(p*Value[i+1][1:end-1] + (1-p)*Value[i+1][2:end])
         if isPut
@@ -54,8 +56,9 @@ function AmOptionPrice(STree,K,y,h,p,isPut=false)
         else
             Value[i] = max.(STree[i].-K,fa)         #call
         end
+        Exerc[i] = Value[i] .> fa                   #early exercise
     end
-    return Value
+    return Value, Exerc
 end
 
 
