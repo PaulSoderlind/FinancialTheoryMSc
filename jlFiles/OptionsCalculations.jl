@@ -1,7 +1,11 @@
 """
     BuildSTree(S,n,u,d)
 
-Build binomial tree, starting at `S` and having `n` steps with up steps `u` and down steps `d`
+Build binomial tree, starting at `S` and having `n` steps with up move `u` and down move `d`
+
+# Output
+- `STree:: Vector or vectors`: each (sub-)vector is for a time step
+
 """
 function BuildSTree(S,n,u,d)
     STree = [fill(NaN,i) for i = 1:n+1]  #vector of vectors (of different lengths)
@@ -18,6 +22,9 @@ end
     EuOptionPrice(STree,K,y,h,p,isPut=false)
 
 Calculate price of European option from binomial model
+
+# Output
+- `Value:: Vector of vectors`: option values at different nodes, same structure as STree
 
 """
 function EuOptionPrice(STree,K,y,h,p,isPut=false)
@@ -38,6 +45,11 @@ end
     AmOptionPrice(STree,K,y,h,p,isPut=false)
 
 Calculate price of American option from binomial model
+
+# Output
+- `Value:: Vector of vectors`: option values at different nodes, same structure as STree
+- `Exerc::` Vector of vectors`: true if early exercise at the node, same structure as STree
+
 """
 function AmOptionPrice(STree,K,y,h,p,isPut=false)     #price of American option
     Value = deepcopy(STree)                           #tree for derivative, to fill
@@ -76,7 +88,7 @@ end
 """
     OptionBlackSPs(S,K,m,y,σ,δ=0,PutIt=false)
 
-Calculate Black-Scholes European option price, continuous dividends of δ
+Calculate Black-Scholes European call or put option price, continuous dividends of δ
 """
 function OptionBlackSPs(S,K,m,y,σ,δ=0,PutIt=false)
     d1 = ( log(S/K) + (y-δ+0.5*σ^2)*m ) / (σ*sqrt(m))
