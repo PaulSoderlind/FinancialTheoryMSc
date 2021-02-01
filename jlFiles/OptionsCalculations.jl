@@ -4,13 +4,14 @@
 Build binomial tree, starting at `S` and having `n` steps with up move `u` and down move `d`
 
 # Output
-- `STree:: Vector or vectors`: each (sub-)vector is for a time step
+- `STree:: Vector or vectors`: each (sub-)vector is for a time step. `STree[0] = [S]` and `STree[n]` is for time period n.
 
 """
 function BuildSTree(S,n,u,d)
     STree = [fill(NaN,i) for i = 1:n+1]  #vector of vectors (of different lengths)
-    STree[1][1] = S                      #time node 1, element 1
-    for i = 2:n+1                        #move forward in time
+    STree = OffsetArray(STree,0:n)       #convert so the indices are 0:n
+    STree[0][1] = S                      #step 0 is in STree[0], element 1
+    for i = 1:n                          #move forward in time
         STree[i][1:end-1] = u*STree[i-1]   #up move from STree[i-1][1:end]
         STree[i][end] = d*STree[i-1][end]  #down move from STree[i-1][end]
     end
@@ -27,15 +28,15 @@ Calculate price of European option from binomial model
 - `Value:: Vector of vectors`: option values at different nodes, same structure as STree
 
 """
-function EuOptionPrice(STree,K,y,h,p,isPut=false)
+function EuOptionPrice(STree,K,y,h,p,isPut=false)     #price of European option
     Value = deepcopy(STree)                           #tree for derivative, to fill
     n     = length(STree) - 1                         #number of steps in STree
     if isPut
-        Value[n+1] = max.(0,K.-STree[n+1])            #put, at last time node
+        Value[n] = max.(0,K.-STree[n])            #put, at last time node
     else
-        Value[n+1] = max.(0,STree[n+1].-K)            #call, at last time node
+        Value[n] = max.(0,STree[n].-K)            #call, at last time node
     end
-    for i = n:-1:1                                    #move backward in time
+    for i = n-1:-1:0                                   #move backward in time
         Value[i] = exp(-y*h)*(p*Value[i+1][1:end-1] + (1-p)*Value[i+1][2:end])
     end                                           #p*up + (1-p)*down, discount
     return Value
@@ -54,14 +55,14 @@ Calculate price of American option from binomial model
 function AmOptionPrice(STree,K,y,h,p,isPut=false)     #price of American option
     Value = deepcopy(STree)                           #tree for derivative, to fill
     n     = length(STree) - 1
-    Exerc = [falses(i) for i = 1:length(STree)]
+    Exerc = similar(Value,BitArray)               #same structure as STree, but BitArrays, empty
     if isPut
-        Value[n+1] = max.(0,K.-STree[n+1])            #put, at last time node
+        Value[n] = max.(0,K.-STree[n])            #put, at last time node
     else
-        Value[n+1] = max.(0,STree[n+1].-K)            #call, at last time node
+        Value[n] = max.(0,STree[n].-K)            #call, at last time node
     end
-    Exerc[n+1] = Value[n+1] .> 0                      #exercise
-    for i = n:-1:1                                    #move backward in time
+    Exerc[n] = Value[n] .> 0                      #exercise
+    for i = n-1:-1:0                                    #move backward in time
         fa  = exp(-y*h)*(p*Value[i+1][1:end-1] + (1-p)*Value[i+1][2:end])
         if isPut
             Value[i] = max.(K.-STree[i],fa)         #put
