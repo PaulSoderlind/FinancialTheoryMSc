@@ -29,7 +29,7 @@ function OlsGMFn(Y,X)
 
     σ2   = var(u)
     V    = inv(X'X)*σ2
-    R2  = 1 - σ2/var(Y)
+    R2   = 1 - σ2/var(Y)
 
     return b, u, Yhat, V, R2
 
