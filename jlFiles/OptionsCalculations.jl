@@ -29,7 +29,7 @@ Calculate price of European option from binomial model
 
 """
 function EuOptionPrice(STree,K,y,h,p,isPut=false)     #price of European option
-    Value = deepcopy(STree)                           #tree for derivative, to fill
+    Value = similar(STree)                            #tree for derivative, to fill
     n     = length(STree) - 1                         #number of steps in STree
     if isPut
         Value[n] = max.(0,K.-STree[n])            #put, at last time node
@@ -53,7 +53,7 @@ Calculate price of American option from binomial model
 
 """
 function AmOptionPrice(STree,K,y,h,p,isPut=false)     #price of American option
-    Value = deepcopy(STree)                           #tree for derivative, to fill
+    Value = similar(STree)                            #tree for derivative, to fill
     n     = length(STree) - 1
     Exerc = similar(Value,BitArray)               #same structure as STree, but BitArrays, empty
     if isPut

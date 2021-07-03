@@ -1,21 +1,25 @@
 """
     MVCalc(μstar,μ,Σ)
 
-Calculate the std and portfolio weights of a portfolio (with a given mean, μstar) on MVF of risky assets.
+Calculate the std and weights of a portfolio (with mean return μstar) on MVF of risky assets.
 
+# Remark
+- Only (λ,δ) and thus (w,stdRp) depend on μstar. We could therefore speed up the computations a bit
+by doing the loop over different μstar values inside the function (and thus not recalculate Σ_1,a,b,c).
 """
-function MVCalc(μstar,μ,Σ) #the std of a portfolio on MVF of risky assets
-    n     = length(μ)
-    Σ_1   = inv(Σ)
-    A     = μ'Σ_1*μ
-    B     = μ'Σ_1*ones(n)
-    C     = ones(n)'Σ_1*ones(n)
-    λ     = (C*μstar - B)/(A*C-B^2)
-    δ     = (A-B*μstar)/(A*C-B^2)
-    w     = Σ_1 *(μ*λ.+δ)
+function MVCalc(μstar,μ,Σ)
+    n    = length(μ)
+    Σ_1  = inv(Σ)
+    a    = μ'Σ_1*μ
+    b    = μ'Σ_1*ones(n)
+    c    = ones(n)'Σ_1*ones(n)
+    λ    = (c*μstar - b)/(a*c-b^2)
+    δ    = (a-b*μstar)/(a*c-b^2)
+    w    = Σ_1 *(μ*λ.+δ)
     StdRp = sqrt(w'Σ*w)
-    return StdRp,w                    #std and portfolio weights
+    return StdRp,w
 end
+
 
 """
     MVCalcRf(μstar,μ,Σ,Rf)
@@ -29,6 +33,7 @@ function MVCalcRf(μstar,μ,Σ,Rf)
     StdRp = sqrt(w'Σ*w)
     return StdRp,w                    #std and portfolio weights
 end
+
 
 """
     MVTangencyP(μ,Σ,Rf)
