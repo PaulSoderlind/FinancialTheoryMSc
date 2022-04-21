@@ -20,7 +20,7 @@ end
 
 
 """
-    EuOptionPrice(STree,K,y,h,p,isPut=false)
+    EuOptionPrice(STree,K,y,h,p;isPut=false)
 
 Calculate price of European option from binomial model
 
@@ -28,7 +28,7 @@ Calculate price of European option from binomial model
 - `Value:: Vector of vectors`: option values at different nodes, same structure as STree
 
 """
-function EuOptionPrice(STree,K,y,h,p,isPut=false)     #price of European option
+function EuOptionPrice(STree,K,y,h,p;isPut=false)     #price of European option
     Value = similar(STree)                            #tree for derivative, to fill
     n     = length(STree) - 1                         #number of steps in STree
     if isPut
@@ -43,7 +43,7 @@ function EuOptionPrice(STree,K,y,h,p,isPut=false)     #price of European option
 end
 
 """
-    AmOptionPrice(STree,K,y,h,p,isPut=false)
+    AmOptionPrice(STree,K,y,h,p;isPut=false)
 
 Calculate price of American option from binomial model
 
@@ -52,7 +52,7 @@ Calculate price of American option from binomial model
 - `Exerc::` Vector of vectors`: true if early exercise at the node, same structure as STree
 
 """
-function AmOptionPrice(STree,K,y,h,p,isPut=false)     #price of American option
+function AmOptionPrice(STree,K,y,h,p;isPut=false)     #price of American option
     Value = similar(STree)                            #tree for derivative, to fill
     n     = length(STree) - 1
     Exerc = similar(Value,BitArray)               #same structure as STree, but BitArrays, empty
@@ -91,11 +91,11 @@ end
 
 Calculate Black-Scholes European call or put option price, continuous dividends of δ
 """
-function OptionBlackSPs(S,K,m,y,σ,δ=0,PutIt=false)
+function OptionBlackSPs(S,K,m,y,σ,δ=0;isPut=false)
     d1 = ( log(S/K) + (y-δ+0.5*σ^2)*m ) / (σ*sqrt(m))
     d2 = d1 - σ*sqrt(m)
     c  = exp(-δ*m)*S*Φ(d1) - K*exp(-y*m)*Φ(d2)
-    if PutIt
+    if isPut
         price = c - exp(-δ*m)*S + exp(-y*m)*K
     else
         price = c
