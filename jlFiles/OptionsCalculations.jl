@@ -1,4 +1,18 @@
 """
+CRRparams(σ,m,n,y)
+
+    BOPM parameters according to CRR
+"""
+function CRRparams(σ,m,y,n)
+    h = m/n                 #time step size (in years)
+    u = exp(σ*sqrt(h))      #up move
+    d = exp(-σ*sqrt(h))     #down move
+    p = (exp(y*h) - d)/(u-d) #rn prob of up move
+    return h,u,d,p
+end
+
+
+"""
     BuildSTree(S,n,u,d)
 
 Build binomial tree, starting at `S` and having `n` steps with up move `u` and down move `d`
@@ -74,6 +88,32 @@ function AmOptionPrice(STree,K,y,h,p;isPut=false)     #price of American option
     return Value, Exerc
 end
 
+"""
+    BOPM_European(S,K,m,y,σ;isPut=false,n=250)
+
+Calculate European CRR/BOPM option price. Wraps functions for the CRR parameters,
+building the tree of the underlying asset and finally the BOPM calculations.
+"""
+function BOPM_European(S,K,m,y,σ;isPut=false,n=250)
+    (h,u,d,p) = CRRparams(σ,m,y,n)
+    STree     = BuildSTree(S,n,u,d)
+    price     = EuOptionPrice(STree,K,y,h,p;isPut)[0][]
+    return price
+end
+
+"""
+    BOPM_American(S,K,m,y,σ;isPut=false,n=250)
+
+Calculate American CRR/BOPM option price. Wraps functions for the CRR parameters,
+building the tree of the underlying asset and finally the BOPM calculations.
+"""
+function BOPM_American(S,K,m,y,σ;isPut=false,n=250)
+    (h,u,d,p) = CRRparams(σ,m,y,n)
+    STree     = BuildSTree(S,n,u,d)
+    price     = AmOptionPrice(STree,K,y,h,p;isPut)[1][0][1]
+    return price
+end
+#------------------------------------------------------------------------------
 
 """
     Φ(x)
@@ -87,7 +127,7 @@ end
 
 
 """
-    OptionBlackSPs(S,K,m,y,σ,δ=0,PutIt=false)
+    OptionBlackSPs(S,K,m,y,σ,δ=0;isPut=false)
 
 Calculate Black-Scholes European call or put option price, continuous dividends of δ
 """
