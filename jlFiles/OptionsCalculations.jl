@@ -43,13 +43,9 @@ Calculate price of European option from binomial model
 
 """
 function EuOptionPrice(STree,K,y,h,p;isPut=false)     #price of European option
-    Value = similar(STree)                            #tree for derivative, to fill
-    n     = length(STree) - 1                         #number of steps in STree
-    if isPut
-        Value[n] = max.(0,K.-STree[n])            #put, at last time node
-    else
-        Value[n] = max.(0,STree[n].-K)            #call, at last time node
-    end
+    Value    = similar(STree)                            #tree for derivative, to fill
+    n        = length(STree) - 1                         #number of steps in STree
+    Value[n] = isPut ? max.(0,K.-STree[n]) : max.(0,STree[n].-K) #last time node
     for i = n-1:-1:0                                   #move backward in time
         Value[i] = exp(-y*h)*(p*Value[i+1][1:end-1] + (1-p)*Value[i+1][2:end])
     end                                           #p*up + (1-p)*down, discount
@@ -63,26 +59,18 @@ Calculate price of American option from binomial model
 
 # Output
 - `Value:: Vector of vectors`: option values at different nodes, same structure as STree
-- `Exerc::` Vector of vectors`: true if early exercise at the node, same structure as STree
+- `Exerc:: Vector of vectors`: true if early exercise at the node, same structure as STree
 
 """
 function AmOptionPrice(STree,K,y,h,p;isPut=false)     #price of American option
     Value = similar(STree)                            #tree for derivative, to fill
     n     = length(STree) - 1
     Exerc = similar(Value,BitArray)               #same structure as STree, but BitArrays, empty
-    if isPut
-        Value[n] = max.(0,K.-STree[n])            #put, at last time node
-    else
-        Value[n] = max.(0,STree[n].-K)            #call, at last time node
-    end
+    Value[n] = isPut ? max.(0,K.-STree[n]) : max.(0,STree[n].-K)        #last time node
     Exerc[n] = Value[n] .> 0                      #exercise
     for i = n-1:-1:0                                    #move backward in time
         fa  = exp(-y*h)*(p*Value[i+1][1:end-1] + (1-p)*Value[i+1][2:end])
-        if isPut
-            Value[i] = max.(K.-STree[i],fa)         #put
-        else
-            Value[i] = max.(STree[i].-K,fa)         #call
-        end
+        Value[i] = isPut ? max.(K.-STree[i],fa) : max.(STree[i].-K,fa)    #put or call
         Exerc[i] = Value[i] .> fa                   #early exercise
     end
     return Value, Exerc
@@ -135,10 +123,6 @@ function OptionBlackSPs(S,K,m,y,σ,δ=0;isPut=false)
     d1 = ( log(S/K) + (y-δ+0.5*σ^2)*m ) / (σ*sqrt(m))
     d2 = d1 - σ*sqrt(m)
     c  = exp(-δ*m)*S*Φ(d1) - K*exp(-y*m)*Φ(d2)
-    if isPut
-        price = c - exp(-δ*m)*S + exp(-y*m)*K
-    else
-        price = c
-    end
+    price = isPut ? c - exp(-δ*m)*S + exp(-y*m)*K : c
     return price
 end
