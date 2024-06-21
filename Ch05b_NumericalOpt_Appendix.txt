@@ -1,1 +1,1 @@
-See Optimization_Optim and Optimization_OSQP in the Julia tutorial repository
+See the chapters in the Julia tutorial repository.
