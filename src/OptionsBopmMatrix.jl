@@ -28,7 +28,7 @@ function EuOptionPriceM(STree,K,y,h,p;isPut=false)
     n        = size(STree,2) - 1                         #number of time steps in STree
     Sn       = STree[:,n+1]
     Value[:,n+1] = isPut ? max.(0,K.-Sn) : max.(0,Sn.-K)  #last time node
-    for i = n-1:-1:0                                   #move backward in time
+    for i in n-1:-1:0                                   #move backward in time
         i1 = i + 1
         Value[1:i1,i1] = exp(-y*h)*(p*Value[1:i1,i1+1] + (1-p)*Value[2:i1+1,i1+1])
     end                                           #p*up + (1-p)*down, discount

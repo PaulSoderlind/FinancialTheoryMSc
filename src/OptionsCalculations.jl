@@ -25,7 +25,7 @@ function BuildSTree(S,n,u,d)
     STree = [fill(NaN,i) for i = 1:n+1]  #vector of vectors (of different lengths)
     STree = OffsetArray(STree,0:n)       #convert so the indices are 0:n
     STree[0][1] = S                      #step 0 is in STree[0], element 1
-    for i = 1:n                          #move forward in time
+    for i in 1:n                          #move forward in time
         STree[i][1:end-1] = u*STree[i-1]   #up move from STree[i-1][1:end]
         STree[i][end] = d*STree[i-1][end]  #down move from STree[i-1][end]
     end
@@ -46,7 +46,7 @@ function EuOptionPrice(STree,K,y,h,p;isPut=false)     #price of European option
     Value    = similar(STree)                            #tree for derivative, to fill
     n        = length(STree) - 1                         #number of steps in STree
     Value[n] = isPut ? max.(0,K.-STree[n]) : max.(0,STree[n].-K) #last time node
-    for i = n-1:-1:0                                   #move backward in time
+    for i in n-1:-1:0                                   #move backward in time
         Value[i] = exp(-y*h)*(p*Value[i+1][1:end-1] + (1-p)*Value[i+1][2:end])
     end                                           #p*up + (1-p)*down, discount
     return Value
@@ -68,7 +68,7 @@ function AmOptionPrice(STree,K,y,h,p;isPut=false)     #price of American option
     Exerc = similar(Value,BitArray)               #same structure as STree, but BitArrays, empty
     Value[n] = isPut ? max.(0,K.-STree[n]) : max.(0,STree[n].-K)        #last time node
     Exerc[n] = Value[n] .> 0                      #exercise
-    for i = n-1:-1:0                                    #move backward in time
+    for i in n-1:-1:0                                    #move backward in time
         fa  = exp(-y*h)*(p*Value[i+1][1:end-1] + (1-p)*Value[i+1][2:end])
         Value[i] = isPut ? max.(K.-STree[i],fa) : max.(STree[i].-K,fa)    #put or call
         Exerc[i] = Value[i] .> fa                   #early exercise
