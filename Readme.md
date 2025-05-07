@@ -7,7 +7,7 @@ This repository contains Julia code for a MSc course in Financial Theory at UNIS
 
 1. Most files are jupyter notebooks. Click one of them to see it online. If GitHub fails to render the notebook or messes up the LaTeX in the Markdown cells, then use [nbviewer](https://nbviewer.jupyter.org/). Instructions: try to open the notebook at GitHub, copy the link and paste it in the address field of nbviewer.
 
-2. Two pdf files contain print-outs of all all notebooks. 
+2. Two pdf files contain print-outs of all notebooks. 
 
 3. To download this repository, use the Download (as zip) in the Github menu. Otherwise, clone it.
 
