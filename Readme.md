@@ -16,7 +16,7 @@ This repository contains Julia code for a MSc course in Financial Theory at UNIS
 
 1. ChapterNumber_Topic.ipynb are notebooks organised around different topics. The chapter numbers correspond to the lecture notes (pdf).
 
-2. NotebooksAsPDFxxxx.pdf is a print-out of all all notebooks. 
+2. NotebooksAsPDFxxxx.pdf is a print-out of all notebooks. 
 
 3. FinxAll.pdf contains the lecture notes.
 
